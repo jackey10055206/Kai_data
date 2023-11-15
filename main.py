@@ -7,11 +7,11 @@ from sklearn.metrics import r2_score
 ###########################
 
 machine_num="1205"#機器代號
-file_dir = "TG20-01205-2023-10-28T080000.data.txt"#你要用的data
-real_time = "2023/10/25 20:28:32"#實際時間
-machine_time = "2023/10/25 20:32:58"#機器時間
-usecols = ['DATE','TIME','N2O']#你要抓的資料(記得要改格式)
-Rtime = ["2023/10/25 10:30:50",
+file_dir = "TG10-01450-2023-10-23T194200.data.txt"#你要用的data
+real_time = "2023/10/25 20:51:10"#實際時間
+machine_time = "2023/10/24 20:38:21"#機器時間
+usecols = ['DATE','TIME','CH4']#你要抓的資料(記得要改格式)
+Rtime = ["2023/10/25 15:54:50",
          "2023/10/25 11:04:10",
          "2023/10/25 11:12:00",
          "2023/10/25 12:03:10",
@@ -42,24 +42,27 @@ df = pd.read_csv(file_dir,sep='\s+',usecols=usecols) #把東西讀取進來
 
 df_new = df.dropna() #如果有Nan就省略
 
-df_new['TIME']= pd.to_datetime(df_new['TIME'], format='%H:%M:%S',errors= 'coerce').dt.time#把TIME那欄換成datetime
+df_new['TIME'] = pd.to_datetime(df_new['TIME'], format='%H:%M:%S',errors= 'coerce').dt.time#把TIME那欄換成datetime
+df_new['DATE'] = pd.to_datetime(df_new['DATE'], format='%Y-%m-%d',errors='coerce')
 
-#print(df_new['TIME'])
-
+df_new['DATETIME'] = pd.to_datetime(df_new['DATE'].astype(str) + ' ' + df_new['TIME'].astype(str),errors='coerce')
+#print(df_new['DATETIME'])
 
 start_time = pd.to_datetime(Mtime[0])
-end_time = start_time + timedelta(minutes=3)
 
-selected_data = df_new[(df_new["TIME"] > start_time.time()) & (df_new["TIME"]< end_time.time())]
+end_time = start_time + timedelta(minutes=3,seconds=1)
 
-#print(selected_data)
+selected_data = df_new[(df_new["DATETIME"] > start_time) & (df_new["DATETIME"]< end_time)]
+
+
+print(selected_data)
 
 ############################################################
 regression_results = []
 
-for i in range(len(selected_data) - 60):
-    window_data = selected_data['N2O'].iloc[i:i + 60].values.reshape(-1, 1)
-    window_time = np.arange(60).reshape(-1, 1)
+for i in range(len(selected_data) - 120):
+    window_data = selected_data['CH4'].iloc[i:i + 120].values.reshape(-1, 1)
+    window_time = np.arange(120).reshape(-1, 1)
 
     model = LinearRegression()
     model.fit(window_time, window_data)
