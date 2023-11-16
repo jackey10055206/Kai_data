@@ -35,7 +35,7 @@ for i in range(6):
 col1='機器時間'
 col2='實際時間'
 data = pd.DataFrame({col1: Mtime,col2: Rtime})
-print(data)
+#print(data)
 # data.to_excel("時間.xlsx",sheet_name="sheet1")
 ###########################
 
@@ -85,8 +85,8 @@ for i in range(len(selected_data) - 120):
     regression_results.append({'start_time': selected_data['TIME'].iloc[i], 'a': a, 'b': b, 'r2': r2})
 
 print(pd.DataFrame(max_r2_record))
-result_df = pd.DataFrame(regression_results)#將全部結果轉換為Dataframe
-print(result_df)
+#result_df = pd.DataFrame(regression_results)#將全部結果轉換為Dataframe
+#print(result_df)
 ############################################################
 
 max_r2_record = max_r2_record[0]  # 取出 dict 資訊
